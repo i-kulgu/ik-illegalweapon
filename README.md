@@ -2,6 +2,8 @@
 
 Illegal weapon shop where you can scratch the serialnumber of your gun or buy a gun with scratched serialnumber.
 
+( For any help you can reach us at Discord: [Hi-Dev](https://discord.com/invite/pSJPPctrNx) )
+
 ## Features
 - Easy to setup items
 - Random or fixed locations (when random, location changes after each script restart)
