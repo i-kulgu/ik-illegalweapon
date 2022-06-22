@@ -74,7 +74,7 @@ local function scratchserie(weapon,ammo)
         disableCombat = true,
     }, {}, {}, {}, function() -- Done
         ClearPedTasks(ped)
-        TriggerServerEvent('ik-illegalweapon:client:scratch', weapon, ammo)
+        TriggerServerEvent('ik-illegalweapon:server:scratch', weapon, ammo)
     end, function()
         ClearPedTasks(ped)
     end) -- Cancel
@@ -174,7 +174,7 @@ RegisterNetEvent('ik-illegalweapon:client:Charge', function(data)
 		if not dialog.amount then return end
 		if tonumber(dialog.amount) <= 0 then TriggerEvent("QBCore:Notify", Lang:t("error.incorrect_amount"), "error") TriggerEvent("ik-illegalweapon:client:Charge", data) return end
 		if data.cost == "Free" then data.cost = 0 end
-		TriggerServerEvent('ik-illegalweapon:client:GetItem', dialog.amount, dialog.billtype, data.item, data.shoptable, data.cost)
+		TriggerServerEvent('ik-illegalweapon:server:GetItem', dialog.amount, dialog.billtype, data.item, data.shoptable, data.cost)
 		RequestAnimDict('amb@prop_human_atm@male@enter')
         while not HasAnimDictLoaded('amb@prop_human_atm@male@enter') do Wait(1) end
         if HasAnimDictLoaded('amb@prop_human_atm@male@enter') then TaskPlayAnim(PlayerPedId(), 'amb@prop_human_atm@male@enter', "enter", 1.0,-1.0, 1500, 1, 1, true, true, true) end

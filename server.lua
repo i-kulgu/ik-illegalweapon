@@ -1,6 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 
-RegisterServerEvent('ik-illegalweapon:client:GetItem', function(amount, billtype, item, shoptable, price)
+RegisterServerEvent('ik-illegalweapon:server:GetItem', function(amount, billtype, item, shoptable, price)
 	local src = source
     local Player = QBCore.Functions.GetPlayer(src)
 	local BlackMoneyName = Config.BlackMoneyName
@@ -45,7 +45,7 @@ RegisterServerEvent('ik-illegalweapon:client:GetItem', function(amount, billtype
 	end
 end)
 
-RegisterNetEvent('ik-illegalweapon:client:scratch', function(weapon, weaponammo)
+RegisterNetEvent('ik-illegalweapon:server:scratch', function(weapon, weaponammo)
     local src = source
     local Player = QBCore.Functions.GetPlayer(source)
     local weaponInfo = QBCore.Shared.Weapons[weapon]
@@ -89,9 +89,9 @@ RegisterNetEvent('ik-illegalweapon:client:scratch', function(weapon, weaponammo)
     end
 end)
 
-function getMarkedBillWorth() 
+function getMarkedBillWorth()
 	local Player = QBCore.Functions.GetPlayer(source)
-	local markedbilltotal = 0 
+	local markedbilltotal = 0
 	for k, v in pairs(Player.PlayerData.items) do
 		if v.name == "markedbills" then
 			markedbilltotal = markedbilltotal + v.info.worth
