@@ -13,3 +13,4 @@ Illegal weapon shop where you can scratch the serialnumber of your gun or buy a 
 - Use an item to scratch the serial numbers
 - Option to remove the item when scratched
 
+![illegalweapon](https://cdn.discordapp.com/attachments/988765807620292608/989085887197503528/unknown.png)
