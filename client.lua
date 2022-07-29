@@ -12,15 +12,15 @@ AddEventHandler('onResourceStart', function(resource) if GetCurrentResourceName(
 	QBCore.Functions.GetPlayerData(function(PlayerData) PlayerJob = PlayerData.job end)
 end)
 
-local function ToggleDoor(vehicle, door)
-    if GetVehicleDoorLockStatus(vehicle) ~= 2 then
-        if GetVehicleDoorAngleRatio(vehicle, door) > 0.0 then
-            SetVehicleDoorShut(vehicle, door, false)
-        else
-            SetVehicleDoorOpen(vehicle, door, false)
-        end
-    end
-end
+-- local function ToggleDoor(vehicle, door)
+--     if GetVehicleDoorLockStatus(vehicle) ~= 2 then
+--         if GetVehicleDoorAngleRatio(vehicle, door) > 0.0 then
+--             SetVehicleDoorShut(vehicle, door, false)
+--         else
+--             SetVehicleDoorOpen(vehicle, door, false)
+--         end
+--     end
+-- end
 
 CreateThread(function()
 	for k, v in pairs(Config.Locations) do
@@ -38,22 +38,28 @@ CreateThread(function()
         end
         -- Create ped for random location number in m
         local i = math.random(1, #v["model"]) -- Get random ped model
-        QBCore.Functions.SpawnVehicle(v.car, function(veh)
-            DealerVehicle[k] = veh
-            ToggleDoor(DealerVehicle[k],2)
-            ToggleDoor(DealerVehicle[k],3)
-            Citizen.Wait(2000)
-            trunkpos = GetWorldPositionOfEntityBone(DealerVehicle[k], 2)
-            print(trunkpos)
-            if not props[k] then props[k] = CreateObject(90805875, v["coords"][m].x, v["coords"][m].y, v["coords"][m].z, false, true, true) end
-            AttachEntityToEntity(props[k], DealerVehicle[k], 2, 0, 1.0, 0.5, 0.0, 0.0, 90.0, true, true, false, true, 1, true)
-            RequestModel(v["model"][i]) while not HasModelLoaded(v["model"][i]) do Wait(0) end
-            if peds[k] == nil then peds[k] = CreatePed(0, v["model"][i], trunkpos.x+0.2, trunkpos.y+0.9, trunkpos.z-0.6, v["coords"][m].a-170, false, false) end
-            SetEntityInvincible(peds[k], true)
-            SetBlockingOfNonTemporaryEvents(peds[k], true)
-            FreezeEntityPosition(peds[k], true)
-            SetEntityNoCollisionEntity(peds[k], PlayerPedId(), false)
-        end, v.coords[m], true)
+        -- QBCore.Functions.SpawnVehicle(v.car, function(veh)
+        --     DealerVehicle[k] = veh
+        --     ToggleDoor(DealerVehicle[k],2)
+        --     ToggleDoor(DealerVehicle[k],3)
+        --     Citizen.Wait(2000)
+        --     trunkpos = GetWorldPositionOfEntityBone(DealerVehicle[k], 2)
+        --     if not props[k] then props[k] = CreateObject(90805875, v["coords"][m].x, v["coords"][m].y, v["coords"][m].z, false, true, true) end
+        --     AttachEntityToEntity(props[k], DealerVehicle[k], 2, 0, 1.0, 0.5, 0.0, 0.0, 90.0, true, true, false, true, 1, true)
+        --     RequestModel(v["model"][i]) while not HasModelLoaded(v["model"][i]) do Wait(0) end
+        --     if peds[k] == nil then peds[k] = CreatePed(0, v["model"][i], trunkpos.x+0.2, trunkpos.y+0.9, trunkpos.z-0.6, v["coords"][m].a-170, false, false) end
+        --     SetEntityInvincible(peds[k], true)
+        --     SetBlockingOfNonTemporaryEvents(peds[k], true)
+        --     FreezeEntityPosition(peds[k], true)
+        --     SetEntityNoCollisionEntity(peds[k], PlayerPedId(), false)
+        -- end, v.coords[m], true)
+
+        if peds[k] == nil then peds[k] = CreatePed(0, v["model"][i], v["coords"][m].x, v["coords"][m].y, v["coords"][m].z, v["coords"][m].a, false, false) end
+        SetEntityInvincible(peds[k], true)
+        SetBlockingOfNonTemporaryEvents(peds[k], true)
+        FreezeEntityPosition(peds[k], true)
+        SetEntityNoCollisionEntity(peds[k], PlayerPedId(), false)
+        GiveWeaponToPed(peds[k],GetHashKey(v.gun),50,false,true)
         if Config.Debug then print("Ped Created for Shop - ['"..k.."']") end
 
         if Config.Debug then print("Shop - ['"..k.."']") end
