@@ -11,7 +11,7 @@ AddEventHandler('onResourceStart', function(resource) if GetCurrentResourceName(
 	QBCore.Functions.GetPlayerData(function(PlayerData) PlayerJob = PlayerData.job end)
 end)
 
-CreateThread(function()
+Citizen.CreateThread(function()
 	for k, v in pairs(Config.Locations) do
         m = math.random(1, #v["coords"]) -- generate a random coordinate
         if not v["hideblip"] then -- Create blip if set to false
