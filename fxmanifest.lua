@@ -1,6 +1,6 @@
 name "ik-illegalweapon"
 author "Proportions#8460"
-version "1.0.0"
+version "1.0.2"
 description "Illegal weapons and weapon scratching by Proportions#8460"
 fx_version "cerulean"
 game "gta5"

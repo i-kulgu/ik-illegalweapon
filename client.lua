@@ -1,7 +1,6 @@
 local QBCore = exports['qb-core']:GetCoreObject()
 peds = {}
 m=0
-DealerVehicle = {}
 props = {}
 PlayerJob = {}
 trunkpos = {}
@@ -11,16 +10,6 @@ RegisterNetEvent('QBCore:Client:SetDuty', function(duty) onDuty = duty end)
 AddEventHandler('onResourceStart', function(resource) if GetCurrentResourceName() ~= resource then return end
 	QBCore.Functions.GetPlayerData(function(PlayerData) PlayerJob = PlayerData.job end)
 end)
-
--- local function ToggleDoor(vehicle, door)
---     if GetVehicleDoorLockStatus(vehicle) ~= 2 then
---         if GetVehicleDoorAngleRatio(vehicle, door) > 0.0 then
---             SetVehicleDoorShut(vehicle, door, false)
---         else
---             SetVehicleDoorOpen(vehicle, door, false)
---         end
---     end
--- end
 
 CreateThread(function()
 	for k, v in pairs(Config.Locations) do
@@ -36,37 +25,20 @@ CreateThread(function()
             AddTextComponentSubstringPlayerName(v["label"])
             EndTextCommandSetBlipName(StoreBlip)
         end
-        -- Create ped for random location number in m
         local i = math.random(1, #v["model"]) -- Get random ped model
-        -- QBCore.Functions.SpawnVehicle(v.car, function(veh)
-        --     DealerVehicle[k] = veh
-        --     ToggleDoor(DealerVehicle[k],2)
-        --     ToggleDoor(DealerVehicle[k],3)
-        --     Citizen.Wait(2000)
-        --     trunkpos = GetWorldPositionOfEntityBone(DealerVehicle[k], 2)
-        --     if not props[k] then props[k] = CreateObject(90805875, v["coords"][m].x, v["coords"][m].y, v["coords"][m].z, false, true, true) end
-        --     AttachEntityToEntity(props[k], DealerVehicle[k], 2, 0, 1.0, 0.5, 0.0, 0.0, 90.0, true, true, false, true, 1, true)
-        --     RequestModel(v["model"][i]) while not HasModelLoaded(v["model"][i]) do Wait(0) end
-        --     if peds[k] == nil then peds[k] = CreatePed(0, v["model"][i], trunkpos.x+0.2, trunkpos.y+0.9, trunkpos.z-0.6, v["coords"][m].a-170, false, false) end
-        --     SetEntityInvincible(peds[k], true)
-        --     SetBlockingOfNonTemporaryEvents(peds[k], true)
-        --     FreezeEntityPosition(peds[k], true)
-        --     SetEntityNoCollisionEntity(peds[k], PlayerPedId(), false)
-        -- end, v.coords[m], true)
-
-        if peds[k] == nil then peds[k] = CreatePed(0, v["model"][i], v["coords"][m].x, v["coords"][m].y, v["coords"][m].z, v["coords"][m].a, false, false) end
+        RequestModel(v["model"][i]) while not HasModelLoaded(v["model"][i]) do Wait(0) end
+        if peds[k] == nil then peds[k] = CreatePed(0, v["model"][i], v["coords"][m].x, v["coords"][m].y, v["coords"][m].z -1, v["coords"][m].a, false, false) end
         SetEntityInvincible(peds[k], true)
         SetBlockingOfNonTemporaryEvents(peds[k], true)
         FreezeEntityPosition(peds[k], true)
         SetEntityNoCollisionEntity(peds[k], PlayerPedId(), false)
-        GiveWeaponToPed(peds[k],GetHashKey(v.gun),50,false,true)
         if Config.Debug then print("Ped Created for Shop - ['"..k.."']") end
 
         if Config.Debug then print("Shop - ['"..k.."']") end
         if Config.OpenWithItem then
-            exports['qb-target']:AddCircleZone("['"..k.."']", vector3(trunkpos.x, trunkpos.y, trunkpos.z), 1.5, { name="['"..k.."']", debugPoly=Config.Debug, useZ=true, },{ options = { { event = "ik-illegalweapon:client:ChoiseMenu", icon = "fas fa-certificate", label = Lang:t("target.browse"), item = Config.ItemName, shoptable = v, name = v["label"],  }, }, distance = 2.0 })
+            exports['qb-target']:AddCircleZone("['"..k.."']", vector3(v["coords"][m].x, v["coords"][m].y, v["coords"][m].z), 1.5, { name="['"..k.."']", debugPoly=Config.Debug, useZ=true, },{ options = { { event = "ik-illegalweapon:client:ChoiseMenu", icon = "fas fa-certificate", label = Lang:t("target.browse"), item = Config.ItemName, shoptable = v, name = v["label"],  }, }, distance = 2.0 })
         else
-            exports['qb-target']:AddCircleZone("['"..k.."']", vector3(trunkpos.x, trunkpos.y, trunkpos.z), 1.5, { name="['"..k.."']", debugPoly=Config.Debug, useZ=true, },{ options = { { event = "ik-illegalweapon:client:ChoiseMenu", icon = "fas fa-certificate", label = Lang:t("target.browse"), shoptable = v, name = v["label"],  }, }, distance = 2.0 })
+            exports['qb-target']:AddCircleZone("['"..k.."']", vector3(v["coords"][m].x, v["coords"][m].y, v["coords"][m].z), 1.5, { name="['"..k.."']", debugPoly=Config.Debug, useZ=true, },{ options = { { event = "ik-illegalweapon:client:ChoiseMenu", icon = "fas fa-certificate", label = Lang:t("target.browse"), shoptable = v, name = v["label"],  }, }, distance = 2.0 })
         end
     end
 end)
@@ -94,7 +66,7 @@ RegisterNetEvent('ik-illegalweapon:client:ChoiseMenu', function(data)
     newinputs[#newinputs+1] = { type = 'radio', name = 'choisemenu', text = settext, options = { { value = "scratch", text = Lang:t("choisemenu.scratch").."<br>($"..Config.ScratchPrice..")" }, { value = "buy", text = Lang:t("choisemenu.buyweapon").."<br>" } } }
     local dialog = exports['qb-input']:ShowInput({ header = header, submitText = Lang:t("choisemenu.confirm"), inputs = newinputs })
     if dialog then
-        if dialog.choisemenu == "buy" then  TriggerEvent("ik-illegalweapon:client:ShopMenu", data)
+        if dialog.choisemenu == "buy" then TriggerEvent("ik-illegalweapon:client:ShopMenu", data)
         elseif dialog.choisemenu == "scratch" then
             local ped = PlayerPedId()
             local weapon = GetSelectedPedWeapon(ped)
@@ -126,7 +98,7 @@ RegisterNetEvent('ik-illegalweapon:client:ShopMenu', function(data)
 		else
 			if Config.UseBlackMoney then
 				totalprice = (products[i].price * Config.BlackMoneyMultiplier)
-				price = Lang:t("menu.cost")..(products[i].price * Config.BlackMoneyMultiplier)
+				price = Lang:t("menu.cost")..(products[i].price * Config.BlackMoneyMultiplier) 
 			else
 				totalprice = products[i].price
 				price = Lang:t("menu.cost")..products[i].price
@@ -139,7 +111,7 @@ RegisterNetEvent('ik-illegalweapon:client:ShopMenu', function(data)
 			for i2 = 1, #products[i].requiredGang do
 				if QBCore.Functions.GetPlayerData().job.name == products[i].requiredGang[i2] then
 					WeaponMenu[#WeaponMenu + 1] = { icon = products[i].name, header = setheader, txt = text, isMenuHeader = lock,
-						params = { event = "ik-illegalweapon:client:Charge", args = { item = products[i].name, cost = totalprice, info = products[i].info, shoptable = data.shoptable, amount = amount } } }
+						params = { event = "ik-illegalweapon:client:Charge", args = { item = products[i].name, cost = totalprice, sp = products[i].scratchprice, info = products[i].info, shoptable = data.shoptable, amount = amount } } }
 				end
 			end
 		else
@@ -147,6 +119,7 @@ RegisterNetEvent('ik-illegalweapon:client:ShopMenu', function(data)
 					params = { event = "ik-illegalweapon:client:Charge", args = {
 									item = products[i].name,
 									cost = totalprice,
+                                    sp = products[i].scratchprice,
 									info = products[i].info,
 									shoptable = data.shoptable,
 									amount = amount,
@@ -163,7 +136,7 @@ RegisterNetEvent('ik-illegalweapon:client:Charge', function(data)
 	if data.cost == "Free" then price = data.cost else price = "$"..data.cost end
 	if QBCore.Shared.Items[data.item].weight == 0 then weight = "" else weight = Lang:t("menu.weight").." "..(QBCore.Shared.Items[data.item].weight / 1000).." kg" end
 	local settext = "- "..Lang:t("menu.confirm").." -<br><br>"
-	settext = settext..weight.."<br> "..Lang:t("menu.cpi").." "..price.."<br><br>- "..Lang:t("menu.payment_type").." -"
+	settext = settext..weight.."<br> "..Lang:t("menu.cpi").." "..price.."<br>"..Lang:t("menu.sp").." "..data.sp.. "<br><br>- "..Lang:t("menu.payment_type").." -"
 	local header = "<center><p><img src=nui://"..Config.img..QBCore.Shared.Items[data.item].image.." width=100px></p>"..QBCore.Shared.Items[data.item].label
 	if data.shoptable["logo"] ~= nil then header = "<center><p><img src="..data.shoptable["logo"].." width=150px></img></p>"..header end
 
@@ -180,7 +153,8 @@ RegisterNetEvent('ik-illegalweapon:client:Charge', function(data)
 		if not dialog.amount then return end
 		if tonumber(dialog.amount) <= 0 then TriggerEvent("QBCore:Notify", Lang:t("error.incorrect_amount"), "error") TriggerEvent("ik-illegalweapon:client:Charge", data) return end
 		if data.cost == "Free" then data.cost = 0 end
-		TriggerServerEvent('ik-illegalweapon:server:GetItem', dialog.amount, dialog.billtype, data.item, data.shoptable, data.cost)
+        local totalpr = data.cost + data.sp
+		TriggerServerEvent('ik-illegalweapon:server:GetItem', dialog.amount, dialog.billtype, data.item, data.shoptable, totalpr)
 		RequestAnimDict('amb@prop_human_atm@male@enter')
         while not HasAnimDictLoaded('amb@prop_human_atm@male@enter') do Wait(1) end
         if HasAnimDictLoaded('amb@prop_human_atm@male@enter') then TaskPlayAnim(PlayerPedId(), 'amb@prop_human_atm@male@enter', "enter", 1.0,-1.0, 1500, 1, 1, true, true, true) end
@@ -190,6 +164,5 @@ end)
 AddEventHandler('onResourceStop', function(resource) if resource ~= GetCurrentResourceName() then return end
     for k, v in pairs(Config.Locations) do exports['qb-target']:RemoveZone("['"..k.."']") end
 	for k, v in pairs(peds) do DeletePed(peds[k]) end
-    for k, v in pairs(DealerVehicle) do DeleteEntity(DealerVehicle[k]) end
 	for k, v in pairs(props) do DeleteEntity(props[k]) end
 end)
