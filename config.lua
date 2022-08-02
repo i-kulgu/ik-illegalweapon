@@ -1,5 +1,5 @@
 Config = {
-    Debug = true, -- Enable to add debug boxes and message.
+    Debug = false, -- Enable to add debug boxes and message.
     img = "lj-inventory/html/images/", -- Set this to your inventory
     RandomLocation = true, -- Set to true if you want random location. False = create for each location a blackmarket
     OpenWithItem = false, -- Is there an item needed to open the blackmarket ?
